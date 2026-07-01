@@ -1,0 +1,127 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<style>
+  .jz-report { max-width: 1100px; }
+  .jz-h1 { font-size: clamp(18px, 5vw, 22px); font-weight: 800; margin-bottom: 4px; }
+  .jz-sub { color: #6E6788; margin-bottom: 20px; font-size: 14px; }
+
+  .jz-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (min-width: 900px) { .jz-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+  .jz-card { border-radius: 14px; padding: 14px 16px; background: #F6F2FD; }
+  .jz-card .lbl { font-size: 12px; color: #6E6788; }
+  .jz-card .val { font-size: clamp(18px, 5vw, 26px); font-weight: 800; line-height: 1.2; margin-top: 2px; }
+  .jz-card.rev { background: #F0E7FC; }
+  .jz-card.rev .val { color: #7A18E0; }
+  .jz-card.profit-pos { background: #E7F6EC; }
+  .jz-card.profit-pos .val { color: #1E9E54; }
+  .jz-card.profit-neg { background: #FDECEC; }
+  .jz-card.profit-neg .val { color: #C2334D; }
+  .jz-card .hint { color: #6E6788; font-size: 11px; margin-top: 2px; }
+
+  .jz-stats { display: flex; gap: 8px 18px; flex-wrap: wrap; margin-bottom: 22px; font-size: 14px; }
+
+  .jz-table-wrap { overflow-x: auto; border: 1px solid #E7DEF6; border-radius: 14px; -webkit-overflow-scrolling: touch; }
+  table.jz { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+  table.jz th, table.jz td { padding: 11px 14px; }
+  table.jz thead tr { background: #F6F2FD; text-align: left; }
+  table.jz tbody tr { border-top: 1px solid #EEE8F9; }
+  table.jz .num { text-align: right; white-space: nowrap; }
+  table.jz .name { font-weight: 600; }
+  table.jz tfoot tr { border-top: 2px solid #E7DEF6; background: #FBF9FE; font-weight: 800; }
+  .pos { color: #1E9E54; }
+  .neg { color: #C2334D; }
+  .muted { color: #6E6788; }
+
+  /* Тёмная тема админки (Unfold ставит класс dark на <html>) */
+  html.dark .jz-sub, html.dark .jz-card .lbl, html.dark .jz-card .hint, html.dark .muted { color: #A49CC0; }
+  html.dark .jz-card { background: #241D3A; }
+  html.dark .jz-card.rev { background: #2A1E45; }
+  html.dark .jz-card.profit-pos { background: #12301F; }
+  html.dark .jz-card.profit-neg { background: #3A1420; }
+  html.dark .jz-table-wrap { border-color: #332B4D; }
+  html.dark table.jz thead tr, html.dark table.jz tfoot tr { background: #241D3A; }
+  html.dark table.jz tbody tr { border-color: #2A2340; }
+  html.dark table.jz td, html.dark table.jz th { color: #F3F0FA; }
+</style>
+
+<div class="jz-report">
+  <div class="jz-h1">Отчёт по продажам</div>
+  <div class="jz-sub">Учитываются все заказы, кроме отменённых.</div>
+
+  <!-- Сводка -->
+  <div class="jz-cards">
+    <div class="jz-card">
+      <div class="lbl">Продано товаров</div>
+      <div class="val">{{ totals.units }} шт.</div>
+    </div>
+    <div class="jz-card rev">
+      <div class="lbl">Выручка</div>
+      <div class="val">{{ totals.revenue|floatformat:0 }} сом</div>
+    </div>
+    <div class="jz-card">
+      <div class="lbl">Себестоимость</div>
+      <div class="val">{{ totals.cost|floatformat:0 }} сом</div>
+    </div>
+    <div class="jz-card {% if totals.profit < 0 %}profit-neg{% else %}profit-pos{% endif %}">
+      <div class="lbl">{% if totals.profit < 0 %}Убыток{% else %}Прибыль{% endif %}</div>
+      <div class="val">{{ totals.profit|floatformat:0 }} сом</div>
+      <div class="hint">маржа {{ totals.margin }}%</div>
+    </div>
+  </div>
+
+  <div class="jz-stats">
+    <div>Всего заказов: <b>{{ orders_count }}</b></div>
+    <div class="pos">Оплачено: <b>{{ paid_count }}</b></div>
+    <div class="neg">Отменено: <b>{{ cancelled_count }}</b></div>
+  </div>
+
+  <!-- Отчёт по товарам -->
+  <div class="jz-h1" style="font-size:clamp(16px,4vw,18px);margin-bottom:12px;">Отчёт по товарам</div>
+  <div class="jz-table-wrap">
+    <table class="jz">
+      <thead>
+        <tr>
+          <th>Товар</th>
+          <th class="num">Продано</th>
+          <th class="num">Выручка</th>
+          <th class="num">Себест-ть</th>
+          <th class="num">Прибыль</th>
+          <th class="num">Маржа</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td class="name">{{ r.product_name }}</td>
+          <td class="num">{{ r.units }} шт.</td>
+          <td class="num">{{ r.revenue|floatformat:0 }}</td>
+          <td class="num muted">{{ r.cost|floatformat:0 }}</td>
+          <td class="num {% if r.profit < 0 %}neg{% else %}pos{% endif %}" style="font-weight:700;">{{ r.profit|floatformat:0 }}</td>
+          <td class="num muted">{{ r.margin }}%</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="padding:20px;text-align:center;" class="muted">Пока нет продаж.</td></tr>
+        {% endfor %}
+      </tbody>
+      {% if rows %}
+      <tfoot>
+        <tr>
+          <td>Итого</td>
+          <td class="num">{{ totals.units }} шт.</td>
+          <td class="num" style="color:#7A18E0;">{{ totals.revenue|floatformat:0 }}</td>
+          <td class="num">{{ totals.cost|floatformat:0 }}</td>
+          <td class="num {% if totals.profit < 0 %}neg{% else %}pos{% endif %}">{{ totals.profit|floatformat:0 }}</td>
+          <td class="num">{{ totals.margin }}%</td>
+        </tr>
+      </tfoot>
+      {% endif %}
+    </table>
+  </div>
+</div>
+{% endblock %}

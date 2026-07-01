@@ -1,0 +1,145 @@
+import '../models/product.dart';
+
+final List<String> categories = [
+  'Электроника',
+  'Одежда',
+  'Дом и сад',
+  'Красота',
+  'Спорт',
+];
+
+final List<Product> mockProducts = [
+  // Электроника
+  Product(
+    id: '1',
+    name: 'Беспроводные наушники',
+    price: 2490,
+    category: 'Электроника',
+    description: 'Bluetooth наушники с шумоподавлением, до 24 часов работы. Глубокий бас и чистые высокие частоты.',
+    imageUrl: 'https://picsum.photos/seed/headphones/400/400',
+  ),
+  Product(
+    id: '2',
+    name: 'Смарт-часы Pro',
+    price: 8990,
+    category: 'Электроника',
+    description: 'Фитнес-трекер, мониторинг сна, пульса и SpO2. Водозащита IP68. AMOLED дисплей.',
+    imageUrl: 'https://picsum.photos/seed/smartwatch/400/400',
+  ),
+  Product(
+    id: '3',
+    name: 'Портативная колонка',
+    price: 3450,
+    category: 'Электроника',
+    description: 'Мощный звук 20Вт, защита от воды IPX7. До 12 часов автономной работы.',
+    imageUrl: 'https://picsum.photos/seed/speaker/400/400',
+  ),
+  // Одежда
+  Product(
+    id: '4',
+    name: 'Худи оверсайз',
+    price: 2200,
+    category: 'Одежда',
+    description: 'Мягкое худи свободного кроя из хлопка. Удобный капюшон и карман-кенгуру.',
+    imageUrl: 'https://picsum.photos/seed/hoodie/400/400',
+  ),
+  Product(
+    id: '5',
+    name: 'Кроссовки Air',
+    price: 5690,
+    category: 'Одежда',
+    description: 'Лёгкие кроссовки с амортизацией. Дышащий верх, удобная подошва для города.',
+    imageUrl: 'https://picsum.photos/seed/sneakers/400/400',
+  ),
+  Product(
+    id: '6',
+    name: 'Джинсы Slim Fit',
+    price: 3100,
+    category: 'Одежда',
+    description: 'Классические джинсы зауженного кроя. Эластичный деним, комфортная посадка.',
+    imageUrl: 'https://picsum.photos/seed/jeans/400/400',
+  ),
+  // Дом и сад
+  Product(
+    id: '7',
+    name: 'LED-гирлянда',
+    price: 890,
+    category: 'Дом и сад',
+    description: 'Гирлянда 10м, тёплый свет, 100 LED. Работает от сети, 8 режимов свечения.',
+    imageUrl: 'https://picsum.photos/seed/ledlights/400/400',
+  ),
+  Product(
+    id: '8',
+    name: 'Керамический горшок',
+    price: 1250,
+    category: 'Дом и сад',
+    description: 'Стильный горшок для комнатных растений. Минималистичный дизайн, дренажное отверстие.',
+    imageUrl: 'https://picsum.photos/seed/pot/400/400',
+  ),
+  Product(
+    id: '9',
+    name: 'Плед из микрофибры',
+    price: 1790,
+    category: 'Дом и сад',
+    description: 'Мягкий и тёплый плед 150×200 см. Не скатывается, легко стирается.',
+    imageUrl: 'https://picsum.photos/seed/blanket/400/400',
+  ),
+  // Красота
+  Product(
+    id: '10',
+    name: 'Набор кистей для макияжа',
+    price: 1450,
+    category: 'Красота',
+    description: '12 кистей из синтетического ворса в кожаном чехле. Для лица и глаз.',
+    imageUrl: 'https://picsum.photos/seed/brushes/400/400',
+  ),
+  Product(
+    id: '11',
+    name: 'Увлажняющий крем',
+    price: 980,
+    category: 'Красота',
+    description: 'Крем с гиалуроновой кислотой и витамином E. Для всех типов кожи, 50 мл.',
+    imageUrl: 'https://picsum.photos/seed/cream/400/400',
+  ),
+  Product(
+    id: '12',
+    name: 'Парфюм Blossom',
+    price: 4200,
+    category: 'Красота',
+    description: 'Цветочно-фруктовый аромат. Ноты пиона, бергамота и белого мускуса. 50 мл.',
+    imageUrl: 'https://picsum.photos/seed/perfume/400/400',
+  ),
+  // Спорт
+  Product(
+    id: '13',
+    name: 'Коврик для йоги',
+    price: 1590,
+    category: 'Спорт',
+    description: 'Нескользящий коврик 183×61 см, толщина 6 мм. Лёгкий и удобный для переноски.',
+    imageUrl: 'https://picsum.photos/seed/yogamat/400/400',
+  ),
+  Product(
+    id: '14',
+    name: 'Гантели 2×3 кг',
+    price: 2300,
+    category: 'Спорт',
+    description: 'Виниловые гантели с нескользящим покрытием. Идеальны для домашних тренировок.',
+    imageUrl: 'https://picsum.photos/seed/dumbbells/400/400',
+  ),
+  Product(
+    id: '15',
+    name: 'Бутылка для воды',
+    price: 690,
+    category: 'Спорт',
+    description: 'Спортивная бутылка 750 мл из тритана. BPA-free, удобная крышка-поилка.',
+    imageUrl: 'https://picsum.photos/seed/waterbottle/400/400',
+  ),
+  Product(
+    id: '16',
+    name: 'Фитнес-резинки набор',
+    price: 1100,
+    category: 'Спорт',
+    description: 'Набор из 5 резинок разной жёсткости. Для разминки, силовых и растяжки.',
+    imageUrl: 'https://picsum.photos/seed/bands/400/400',
+  ),
+];
