@@ -58,3 +58,8 @@ db.sqlite3
 
 # OS / editor
 .DS_Store
+
+# --- Android release signing (НЕ коммитить — секреты!) ---
+**/key.properties
+**/*.jks
+**/*.keystore
