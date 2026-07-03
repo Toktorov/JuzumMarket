@@ -127,8 +127,11 @@ workflows:
         notify:
           success: true
           failure: true
-      # --- Автозагрузка в TestFlight (включите ПОСЛЕ создания приложения в App Store Connect) ---
-      # app_store_connect:
-      #   auth: integration
-      #   submit_to_testflight: true
-      #   submit_to_app_store: false
+      # Автозагрузка в TestFlight.
+      # ВАЖНО: приложение с bundle id su.bigbee.juzum должно быть заранее
+      # создано в App Store Connect (My Apps → +), иначе publish упадёт
+      # (но .ipa всё равно останется в артефактах).
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
