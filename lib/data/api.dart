@@ -16,11 +16,10 @@ class ApiException implements Exception {
 
 /// Клиент REST API бэкенда JUZUM.
 ///
-/// Базовый адрес: при тестировании на телефоне по USB используется
-/// `adb reverse tcp:8000 tcp:8000`, поэтому работает localhost.
-/// Для Wi-Fi замените на IP компьютера, напр. http://192.168.1.101:8000.
+/// Продакшн-бэкенд (публичный HTTPS). Для локальной разработки по USB
+/// можно временно поставить 'http://127.0.0.1:8000' + `adb reverse tcp:8000 tcp:8000`.
 class ApiService {
-  static const String baseUrl = 'http://127.0.0.1:8000';
+  static const String baseUrl = 'https://juzum.bigbee.su';
   static const String apiUrl = '$baseUrl/api';
   static const _timeout = Duration(seconds: 8);
 
