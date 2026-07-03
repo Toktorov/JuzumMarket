@@ -79,18 +79,27 @@ workflows:
       app_store_connect: juzum_asc
     environment:
       flutter: stable
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: su.bigbee.juzum
+      vars:
+        BUNDLE_ID: "su.bigbee.juzum"
     cache:
       cache_paths:
         - $HOME/.pub-cache
     scripts:
       - name: Flutter packages
         script: flutter pub get
+      - name: Подпись iOS — создаёт App ID, сертификат и профиль при отсутствии
+        script: |
+          keychain initialize
+          # --create: если App ID / профиля / сертификата ещё нет — создать их.
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+          keychain add-certificates
+          # Прописывает профили в проект и пишет ~/export_options.plist
+          xcode-project use-profiles
       - name: Установка CocoaPods
         script: find . -name "Podfile" -execdir pod install \;
-      - name: Сборка IPA (подпись автоматическая через App Store Connect)
+      - name: Сборка IPA
         script: |
           flutter build ipa --release \
             --build-number=$BUILD_NUMBER \
