@@ -87,15 +87,28 @@ workflows:
     scripts:
       - name: Flutter packages
         script: flutter pub get
-      - name: Подпись iOS — создаёт App ID, сертификат и профиль при отсутствии
+      - name: Подпись iOS — создаёт App ID, distribution-сертификат и профиль
         script: |
+          set -e
           keychain initialize
-          # --create: если App ID / профиля / сертификата ещё нет — создать их.
+          # Приватный ключ для distribution-сертификата.
+          # Лучше задать постоянный ключ в переменной CERTIFICATE_PRIVATE_KEY
+          # (иначе каждый билд создаёт новый сертификат — лимит Apple = 2-3 шт.).
+          if [ -n "$CERTIFICATE_PRIVATE_KEY" ]; then
+            CERT_KEY_ARG="@env:CERTIFICATE_PRIVATE_KEY"
+          else
+            echo "CERTIFICATE_PRIVATE_KEY не задан — генерирую временный ключ."
+            CERT_KEY_FILE="$(mktemp)"
+            openssl genrsa -out "$CERT_KEY_FILE" 2048
+            CERT_KEY_ARG="@file:$CERT_KEY_FILE"
+          fi
+          # --create: создать App ID, сертификат (по ключу выше) и профиль, если их нет.
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
+            --certificate-key "$CERT_KEY_ARG" \
             --create
           keychain add-certificates
-          # Прописывает профили в проект и пишет ~/export_options.plist
+          # Прописывает профили в проект (manual signing) и пишет ~/export_options.plist
           xcode-project use-profiles
       - name: Установка CocoaPods
         script: find . -name "Podfile" -execdir pod install \;
