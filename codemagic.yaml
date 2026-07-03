@@ -67,7 +67,7 @@ workflows:
   #      → сгенерировать ключ (роль App Manager). Скачать .p8, запомнить Issuer ID и Key ID.
   #   3. В Codemagic → Team settings → Integrations → App Store Connect
   #      → добавить этот ключ с Reference name: juzum_asc  (совпадает с integrations ниже).
-  #   4. Bundle id com.juzum.juzum: Codemagic создаст его сам по API-ключу
+  #   4. Bundle id su.bigbee.juzum: Codemagic создаст его сам по API-ключу
   #      (или зарегистрируйте вручную в Apple Developer).
   #   5. Создать приложение в App Store Connect (для загрузки в TestFlight/App Store).
   # ============================================================
@@ -81,7 +81,7 @@ workflows:
       flutter: stable
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.juzum.juzum
+        bundle_identifier: su.bigbee.juzum
     cache:
       cache_paths:
         - $HOME/.pub-cache

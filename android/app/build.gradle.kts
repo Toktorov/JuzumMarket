@@ -17,7 +17,7 @@ if (useReleaseSigning) {
 }
 
 android {
-    namespace = "com.juzum.juzum"
+    namespace = "su.bigbee.juzum"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -27,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.juzum.juzum"
+        applicationId = "su.bigbee.juzum"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

@@ -1,4 +1,4 @@
-package com.juzum.juzum
+package su.bigbee.juzum
 
 import io.flutter.embedding.android.FlutterActivity
 
