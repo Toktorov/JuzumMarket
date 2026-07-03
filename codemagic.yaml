@@ -1,0 +1,58 @@
+# Codemagic CI/CD — сборка JUZUM для Google Play.
+#
+# ПЕРЕД первым запуском загрузите релизный keystore в Codemagic:
+#   Codemagic → (Teams/App) Settings → Code signing identities → Android keystores
+#   • Reference name:     juzum_keystore   (должно совпадать с android_signing ниже)
+#   • Keystore file:      android/app/upload-keystore.jks   (из репозитория он исключён —
+#                         возьмите локальный файл и загрузите вручную)
+#   • Keystore password:  juzumUpload2026
+#   • Key alias:          upload
+#   • Key password:       juzumUpload2026
+#
+# После этого нажмите «Check for configuration files» и запустите сборку.
+
+workflows:
+  android-release:
+    name: JUZUM Android (Play Store AAB)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      android_signing:
+        - juzum_keystore
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+    scripts:
+      - name: Flutter packages
+        script: flutter pub get
+      - name: Настройка релизной подписи (key.properties)
+        script: |
+          cat > "$CM_BUILD_DIR/android/key.properties" <<EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=$CM_KEYSTORE_PATH
+          EOF
+      - name: Сборка AAB (для Google Play)
+        script: flutter build appbundle --release --build-number=$BUILD_NUMBER
+      - name: Сборка APK (для теста на устройстве)
+        script: flutter build apk --release --build-number=$BUILD_NUMBER
+    artifacts:
+      - build/**/outputs/bundle/**/*.aab
+      - build/**/outputs/apk/**/*.apk
+      - build/**/outputs/**/mapping.txt
+    publishing:
+      email:
+        recipients:
+          - toktorov2005@gmail.com
+        notify:
+          success: true
+          failure: true
+      # --- Автопубликация в Google Play (включите ПОСЛЕ настройки service account) ---
+      # Загрузите JSON сервис-аккаунта в Codemagic как переменную
+      # GCLOUD_SERVICE_ACCOUNT_CREDENTIALS, затем раскомментируйте:
+      # google_play:
+      #   credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+      #   track: internal
+      #   submit_as_draft: true
